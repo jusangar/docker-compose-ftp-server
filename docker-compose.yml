@@ -1,0 +1,26 @@
+services:
+  ftp:
+    # optionally replace username/repo:tag with your name and image details
+    image: stilliard/pure-ftpd:latest
+    container_name: ftp
+    environment:
+      PUBLICHOST: ${IP}
+      FTP_USER_NAME: ${USERNAME}
+      FTP_USER_PASS: ${PASSWORD}
+      FTP_USER_HOME: /home/ftpusers/{USERNAME}
+      FTP_USER_UID: 33
+      FTP_USER_GID: 33
+      ADDED_FLAGS: "--tls=2"
+    volumes:
+      - ./data/passwd:/etc/pure-ftpd/passwd
+    # or ssl/tls with Let's Encrypt (cert and key as two files)
+      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem
+#      - ./data/letsencrypt/privkey.pem:/etc/ssl/private/pure-ftpd-key.pem
+    restart: always
+    ports:
+      - '21:21'
+      - '30000-30009:30000-30009'
+networks:
+  default:
+    external: true
+    name: noctis
