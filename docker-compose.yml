@@ -13,9 +13,8 @@ services:
       ADDED_FLAGS: "--tls=2"
     volumes:
       - ./data/passwd:/etc/pure-ftpd/passwd
-    # or ssl/tls with Let's Encrypt (cert and key as two files)
-      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem
-#      - ./data/letsencrypt/privkey.pem:/etc/ssl/private/pure-ftpd-key.pem
+    # cat /etc/letsencrypt/live/<your_server>/cert.pem /etc/letsencrypt/live/<your_server>/privkey.pem > pure-ftpd.pem
+      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem # cert and key as one file
     restart: always
     ports:
       - '21:21'
