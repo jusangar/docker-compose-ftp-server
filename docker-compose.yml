@@ -1,25 +1,47 @@
+networks:
+  frontend:
+    # Add 'external: true' to use an existing network
+    # Añade 'external: true' para usar una red existente
+    external: true
+  backend:
+    external: true
+
 services:
   ftp:
-    # optionally replace username/repo:tag with your name and image details
     image: stilliard/pure-ftpd:latest
     container_name: ftp
     environment:
       PUBLICHOST: ${IP}
-      FTP_USER_NAME: ${USERNAME}
-      FTP_USER_PASS: ${PASSWORD}
-      FTP_USER_HOME: /home/ftpusers/{USERNAME}
-      FTP_USER_UID: 33
-      FTP_USER_GID: 33
       ADDED_FLAGS: "--tls=2"
+      TZ: Europe/Madrid
+      AUTH_METHOD: mysql
     volumes:
-      - ./data/passwd:/etc/pure-ftpd/passwd
-    # cat /etc/letsencrypt/live/<your_server>/cert.pem /etc/letsencrypt/live/<your_server>/privkey.pem > pure-ftpd.pem
-      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem # cert and key as one file
-    restart: always
+      - ./data:/data
+      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem
+      # Concat the cert and the key with cat cert.pem key.pem > pure-ftpd.pem
+      # Concatena el certificado y la clave con cat cert.pem key.pem > pure-ftpd.pem
+      # Move the certs to the letsencrypt folder
+      # Mueve el certificado a la carpeta de letsencrypt
+    restart: unless-stopped
     ports:
       - '21:21'
-      - '30000-30009:30000-30009'
-networks:
-  default:
-    external: true
-    name: noctis
+      - '30000-30100:30000-30100'
+    networks:
+      - frontend
+      - backend
+
+  db:
+    image: mariadb:latest
+    container_name: ftp-db
+    networks:
+      - backend
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./users.sql:/docker-entrypoint-initdb.d/users.sql
+    environment:
+      - TZ=Europe/Madrid
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_DATABASE=pureftpd
+      - MYSQL_USER=${USER}
+      - MYSQL_PASSWORD=${PASSWORD}
+    restart: unless-stopped
