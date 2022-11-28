@@ -16,7 +16,6 @@ services:
       TZ: Europe/Madrid
       AUTH_METHOD: mysql
     volumes:
-      - ./data:/data
       - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem
       # Concat the cert and the key with cat cert.pem key.pem > pure-ftpd.pem
       # Concatena el certificado y la clave con cat cert.pem key.pem > pure-ftpd.pem
