@@ -30,7 +30,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ./data/ftp1:/data
+      - ./data/:/data/
       - ./foo:/home/foo/
       - ./bob:/home/bob/
     environment:
