@@ -7,40 +7,56 @@ networks:
     external: true
 
 services:
-  ftp:
-    image: stilliard/pure-ftpd:latest
-    container_name: ftp
-    environment:
-      PUBLICHOST: ${IP}
-      ADDED_FLAGS: "--tls=2"
-      TZ: Europe/Madrid
-      AUTH_METHOD: mysql
-    volumes:
-      - ./data/letsencrypt/pure-ftpd.pem:/etc/ssl/private/pure-ftpd.pem
-      # Concat the cert and the key with cat cert.pem key.pem > pure-ftpd.pem
-      # Concatena el certificado y la clave con cat cert.pem key.pem > pure-ftpd.pem
-      # Move the certs to the letsencrypt folder
-      # Mueve el certificado a la carpeta de letsencrypt
-    restart: unless-stopped
-    ports:
-      - '21:21'
-      - '30000-30100:30000-30100'
-    networks:
-      - frontend
-      - backend
-
   db:
     image: mariadb:latest
-    container_name: ftp-db
-    networks:
-      - backend
+    container_name: pureftpd-db
+    restart: always
     volumes:
       - ./db:/var/lib/mysql
       - ./users.sql:/docker-entrypoint-initdb.d/users.sql
     environment:
-      - TZ=Europe/Madrid
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_DATABASE=pureftpd
-      - MYSQL_USER=${USER}
-      - MYSQL_PASSWORD=${PASSWORD}
-    restart: unless-stopped
+      TZ: Europe/Madrid
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
+      MYSQL_DATABASE: pureftpd
+      MYSQL_USER: bob
+      MYSQL_PASSWORD: t4hmPb9wMsGrY4
+    networks:
+      - backend
+
+  pureftpd1:
+    image: crazymax/pure-ftpd
+    container_name: pureftpd1
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./data/ftp1:/data
+      - ./foo:/home/foo/
+      - ./bob:/home/bob/
+    environment:
+      TZ: Europe/Madrid
+      AUTH_METHOD: mysql
+    networks:
+      - frontend
+      - backend
+    ports:
+      - "2100:2100"
+      - "30000-30009:30000-30009"
+
+#  pureftpd2:
+#    image: crazymax/pure-ftpd
+#    container_name: pureftpd2
+#    restart: always
+#    depends_on:
+#      - db
+#    volumes:
+#      - ./data/ftp2:/data
+#    environment:
+#      TZ: Europe/Madrid
+#      AUTH_METHOD: mysql
+#    networks:
+#      - frontend
+#      - backend
+#    ports:
+#      - "1200:21"
+#      - "30010-30019:30010-30019"

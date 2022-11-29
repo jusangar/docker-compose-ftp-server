@@ -7,3 +7,5 @@ CREATE TABLE users (
                        Dir VARCHAR(255) BINARY NOT NULL,
                        PRIMARY KEY (User)
 );
+# $ docker-compose exec db mysql -u pureftpd -p'asupersecretpassword' -e "INSERT INTO users (User,Password,Uid,Gid,Dir) VALUES ('foo',ENCRYPT('test'),'1003','1005','/home/foo');" pureftpd
+# $ docker-compose exec db mysql -u pureftpd -p'asupersecretpassword' -e "SELECT * FROM users;" pureftpd
