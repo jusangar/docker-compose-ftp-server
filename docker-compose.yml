@@ -1,8 +1,6 @@
 networks:
-  frontend:
-    # Add 'external: true' to use an existing network
-    # Añade 'external: true' para usar una red existente
-    external: true
+  frontend: # Name of the network
+    external: true # Set to true to use an existing network
   backend:
     external: true
 
