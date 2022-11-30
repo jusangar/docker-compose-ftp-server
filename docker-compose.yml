@@ -12,27 +12,26 @@ services:
     container_name: pureftpd-db
     restart: always
     volumes:
-      - ./db:/var/lib/mysql
-      - ./users.sql:/docker-entrypoint-initdb.d/users.sql
+      - /root/s-ftp/db:/var/lib/mysql
+      - /root/s-ftp/users.sql:/docker-entrypoint-initdb.d/users.sql
     environment:
       TZ: Europe/Madrid
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
       MYSQL_DATABASE: pureftpd
-      MYSQL_USER: bob
-      MYSQL_PASSWORD: t4hmPb9wMsGrY4
+      MYSQL_USER: $[USER]
+      MYSQL_PASSWORD: $[PASS]
     networks:
       - backend
 
-  pureftpd1:
+  pureftpd:
     image: crazymax/pure-ftpd
-    container_name: pureftpd1
+    container_name: pureftpd
     restart: always
     depends_on:
       - db
     volumes:
-      - ./data/:/data/
-      - ./foo:/home/foo/
-      - ./bob:/home/bob/
+      - /root/s-ftp/data/:/data/
+      - /root/s-ftp/bob:/home/bob/
     environment:
       TZ: Europe/Madrid
       AUTH_METHOD: mysql
@@ -42,21 +41,3 @@ services:
     ports:
       - "2100:2100"
       - "30000-30009:30000-30009"
-
-#  pureftpd2:
-#    image: crazymax/pure-ftpd
-#    container_name: pureftpd2
-#    restart: always
-#    depends_on:
-#      - db
-#    volumes:
-#      - ./data/ftp2:/data
-#    environment:
-#      TZ: Europe/Madrid
-#      AUTH_METHOD: mysql
-#    networks:
-#      - frontend
-#      - backend
-#    ports:
-#      - "1200:21"
-#      - "30010-30019:30010-30019"
