@@ -31,7 +31,7 @@ services:
       - db
     volumes:
       - /root/s-ftp/data/:/data/
-      - /root/s-ftp/bob:/home/bob/
+      - /root/s-ftp/$[USER]:/home/$[USER]/
     environment:
       TZ: Europe/Madrid
       AUTH_METHOD: mysql
