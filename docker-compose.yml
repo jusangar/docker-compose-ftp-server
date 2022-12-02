@@ -10,8 +10,8 @@ services:
     container_name: pureftpd-db
     restart: always
     volumes:
-      - /root/s-ftp/db:/var/lib/mysql
-      - /root/s-ftp/users.sql:/docker-entrypoint-initdb.d/users.sql
+      - ./db:/var/lib/mysql
+      - ./users.sql:/docker-entrypoint-initdb.d/users.sql
     environment:
       TZ: Europe/Madrid
       MYSQL_ALLOW_EMPTY_PASSWORD: yes
@@ -28,8 +28,8 @@ services:
     depends_on:
       - db
     volumes:
-      - /root/s-ftp/data/:/data/
-      - /root/s-ftp/$[USER]:/home/$[USER]/
+      - ./data/:/data/
+      - ./$[USER]:/home/$[USER]/
     environment:
       TZ: Europe/Madrid
       AUTH_METHOD: mysql
