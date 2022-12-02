@@ -29,7 +29,7 @@ services:
       - db
     volumes:
       - ./data/:/data/
-      - ./$[USER]:/home/$[USER]/
+      - ./foo:/home/foo/
     environment:
       TZ: Europe/Madrid
       AUTH_METHOD: mysql
